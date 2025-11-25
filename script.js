@@ -658,3 +658,100 @@ nextSampleBtn.addEventListener("click", () => {
 setModeFull();
 newPatient();
 
+/* ==========================================
+   ANDROID TOUCH-DRAG SUPPORT (FIXED VERSION)
+   Now supports:
+   ✔ Proper dropping
+   ✔ Needle moves but labels stay in place
+   ========================================== */
+
+function enableTouchDrag(el, type) {
+  if (!el) return;
+
+  let dragging = false;
+  let offsetX = 0, offsetY = 0;
+
+  // The actual moving clone (to avoid moving labels)
+  let ghost = null;
+
+  el.addEventListener("touchstart", e => {
+    e.preventDefault();
+
+    const t = e.touches[0];
+    const rect = el.getBoundingClientRect();
+
+    dragging = true;
+
+    offsetX = t.clientX - rect.left;
+    offsetY = t.clientY - rect.top;
+
+    // CREATE A FLOATING COPY (ghost needle)
+    ghost = el.cloneNode(true);
+    ghost.style.position = "fixed";
+    ghost.style.left = rect.left + "px";
+    ghost.style.top = rect.top + "px";
+    ghost.style.zIndex = "9999";
+    ghost.style.pointerEvents = "none";   // ← IMPORTANT!!
+    ghost.classList.add("dragging");
+
+    // Remove labels inside ghost
+    const label = ghost.querySelector(".dropper-label");
+    if (label) label.remove();
+
+    document.body.appendChild(ghost);
+  }, { passive: false });
+
+  el.addEventListener("touchmove", e => {
+    if (!dragging) return;
+    e.preventDefault();
+
+    const t = e.touches[0];
+
+    ghost.style.left = (t.clientX - offsetX) + "px";
+    ghost.style.top  = (t.clientY - offsetY) + "px";
+  }, { passive: false });
+
+  el.addEventListener("touchend", e => {
+    if (!dragging) return;
+    dragging = false;
+    e.preventDefault();
+
+    const t = e.changedTouches[0];
+
+    // Temporarily hide ghost to detect element underneath
+    ghost.style.display = "none";
+    const dropTarget = document.elementFromPoint(t.clientX, t.clientY);
+    ghost.style.display = "";
+
+    // If dropped on a partition → trigger real drop
+    if (dropTarget && dropTarget.closest(".partition")) {
+      const wrap = dropTarget.closest(".well-wrap");
+      simulateDrop(type, wrap);
+    }
+
+    // Remove ghost
+    ghost.remove();
+    ghost = null;
+
+    // Snap animation on real element
+    el.classList.add("snap");
+    setTimeout(() => el.classList.remove("snap"), 460);
+  }, { passive: false });
+}
+
+function simulateDrop(type, wrap) {
+  if (!wrap) return;
+  const event = new Event("drop", { bubbles: true });
+  event.dataTransfer = {
+    getData: () => type
+  };
+  wrap.querySelector(".partition").dispatchEvent(event);
+}
+
+/* Enable touch drag */
+enableTouchDrag(dropperA, "A");
+enableTouchDrag(dropperB, "B");
+enableTouchDrag(dropperD, "D");
+enableTouchDrag(bloodSample, "blood");
+
+
