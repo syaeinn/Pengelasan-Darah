@@ -31,12 +31,7 @@ const dropSound = document.getElementById('dropSound');
 const bloodSample = document.getElementById('bloodSample');
 const bloodSampleLabel = document.querySelector('.blood-sample-label');
 
-// Prevent iOS long-press saving image popup
-document.addEventListener("touchstart", function(e){
-    if (e.target.tagName === "IMG" || e.target.classList.contains("dropper")) {
-        e.preventDefault();
-    }
-}, { passive: false });
+
 
 let ABOOnly = false;
 let currentPatient = null;
@@ -662,3 +657,4 @@ nextSampleBtn.addEventListener("click", () => {
 /* initialize */
 setModeFull();
 newPatient();
+
