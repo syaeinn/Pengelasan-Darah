@@ -1,6 +1,5 @@
 /* Elements */
 
-
 const btnFull = document.getElementById('btnFull');
 const btnABO  = document.getElementById('btnABO');
 
@@ -31,12 +30,6 @@ const dropSound = document.getElementById('dropSound');
 const bloodSample = document.getElementById('bloodSample');
 const bloodSampleLabel = document.querySelector('.blood-sample-label');
 
-
-
-let ABOOnly = false;
-let currentPatient = null;
-let applied = {A:false, B:false, D:false};
-let bloodDroppedTo = {A:false, B:false, D:false}; // track where we dropped blood
 
 /* Blood sets (unchanged) */
 const bloodFull = [
@@ -91,8 +84,13 @@ function canReceive(bt, donor) { return aboReceive(bt, donor) && rhDonate(donor,
 
 /* pick patient */
 function pickPatient() {
-  return ABOOnly ? bloodABO[Math.floor(Math.random()*bloodABO.length)]
-                 : bloodFull[Math.floor(Math.random()*bloodFull.length)];
+  if (ABOOnly) {
+    const randomIndex = Math.floor(Math.random() * bloodABO.length);
+    return bloodABO[randomIndex];
+  } else {
+    const randomIndex = Math.floor(Math.random() * bloodFull.length);
+    return bloodFull[randomIndex];
+  }
 }
 
 /* show/hide D well visually (ABO mode) */
@@ -235,7 +233,7 @@ wellWraps.forEach(wrap => {
 
     // If ABO-only & D -> disabled notice & snap back
     if (ABOOnly && target === 'D' && dt !== 'blood') {
-      showWrongNotice('Disabled (ABO only)');
+      showWrongNotice('Hanya mod ABO+Rh)');
       const dragging = document.querySelector('.dropper.dragging');
       if (dragging) { dragSnapBack(dragging); }
       return;
@@ -246,7 +244,7 @@ wellWraps.forEach(wrap => {
       // wrong well (dragger to wrong partition)
       if (dt !== target) {
         wrap.querySelector('.partition').classList.add('wrong-drop');
-        showWrongNotice('Wrong well!');
+        showWrongNotice('Tidak tepat!');
         setTimeout(()=> wrap.querySelector('.partition').classList.remove('wrong-drop'), 900);
         const dragging = document.querySelector('.dropper.dragging');
         if (dragging) dragSnapBack(dragging);
@@ -654,6 +652,10 @@ nextSampleBtn.addEventListener("click", () => {
     }, 300);
 });
 
+
+
+
+
 /* initialize */
 setModeFull();
 newPatient();
@@ -661,8 +663,8 @@ newPatient();
 /* ==========================================
    ANDROID TOUCH-DRAG SUPPORT (FIXED VERSION)
    Now supports:
-   ✔ Proper dropping
-   ✔ Needle moves but labels stay in place
+   ✔️ Proper dropping
+   ✔️ Needle moves but labels stay in place
    ========================================== */
 
 function enableTouchDrag(el, type) {
@@ -753,5 +755,3 @@ enableTouchDrag(dropperA, "A");
 enableTouchDrag(dropperB, "B");
 enableTouchDrag(dropperD, "D");
 enableTouchDrag(bloodSample, "blood");
-
-
