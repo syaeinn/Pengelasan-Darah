@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
 :root{
   --accent: #4c84ff;
   --muted: #e6e6e6;
@@ -82,6 +84,9 @@ main h2 { text-align:center; margin:18px 0 6px; }
 .glass-slide {
   width: 620px;
   height: 210px;
+  font-family: "Marker Pens", sans-serif;   /* ← change font here */
+  color: #4c84ff;
+  
 
   /* Real lab slide glass effect */
   background: rgba(255, 255, 255, 0.22); /* transparent white */
@@ -114,9 +119,9 @@ main h2 { text-align:center; margin:18px 0 6px; }
   border-radius: 10px;
 
   background-image:
-    url("./image/scratch.png"); /* tiny noise texture */
+    url("./image/glassboard.png"); /* tiny noise texture */
   mix-blend-mode: soft-light;
-  opacity: 0.25;
+  opacity: 0.35;
   filter: contrast(140%) brightness(105%);
 }
 
@@ -164,12 +169,14 @@ main h2 { text-align:center; margin:18px 0 6px; }
 
 /* partition marker label */
 .well-label.small {
+  font-family: "Permanent Marker", cursive; /* ← change font here */
   margin-top: 10px;
   font-weight:900;
-  color:#ffffff;
-  font-size:16px;
+  color:#080099d2;
+  font-size:20px;
   letter-spacing:1px;
   text-transform:uppercase;
+  opacity: 0.35;
 }
 
 /* serum puddle (small rounded droplet on glass) */
